@@ -3,8 +3,9 @@ import time
 import redis
 from pymisc.web.browser import Browser
 
-def extract_urls(content):
-    url_re = re.compile(r'\b(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))')
+URL_EXTRACTOR_RE = re.compile(r'\b(([\w-]+://?|www[.])[^\s()<>]+(?:\([\w\d]+\)|([^[:punct:]\s]|/)))')
+
+def extract_urls(content, url_re=URL_EXTRACTOR_RE):
     for match in url_re.finditer(content):
         yield match.group(0)
 
@@ -18,8 +19,8 @@ class PyScrapper(object):
         self.prefix_key = "%s" % redis_config.get('prefix', 'pyscrapper')
         self.browser = browser_class()
         self.set_initial_urls(initial_urls if isinstance(initial_urls, list) else [initial_urls])
-        self.follow_urls = follow_urls
-        self.landing_urls = landing_urls
+        self.follow_urls = [re.compile(url) for url in follow_urls]
+        self.landing_urls = [(re.compile(url), callback) for url, callback in landing_urls]
 
     def set_initial_urls(self, initial_urls):
         for url in initial_urls:
@@ -27,19 +28,19 @@ class PyScrapper(object):
                 self.redis.rpush(self.queue_key, url)
 
     def add_landing_url(self, url, callback):
-        self.landing_urls.append((url, callback))
+        self.landing_urls.append((re.compile(url), callback))
 
     def add_follow_url(self, url):
-        self.follow_urls.append(url)
+        self.follow_urls.append(re.compile(url))
 
     def _land_url(self, url, content):
         for landing_url, callback in self.landing_urls:
-            if re.match(landing_url, url):
+            if landing_url.match(url):
                 callback(url, content)
 
     def _can_follow(self, url):
         for follow_url in self.follow_urls:
-            if re.match(follow_url, url):
+            if follow_url.match(url):
                 return True
         return False
 
