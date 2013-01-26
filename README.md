@@ -31,6 +31,8 @@ Use pyscrapper
     )
     scrapper.run()
 
+For more detailed usage look at examples:/eztv_test.py example.
+
 License
 -------
 
