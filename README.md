@@ -23,7 +23,9 @@ Installation
 Use pyscrapper
 ------------
 
-    from pyscrapper import PyScrapper
+Example of usage PyScrapper class:
+
+    from pyscrapper.scrapper import PyScrapper
 
     scrapper = PyScrapper(
         initial_urls=["http://url/to/scrap/"],
@@ -31,14 +33,27 @@ Use pyscrapper
     )
     scrapper.run()
 
-    or
+or using run_scrapper shortcut:
 
-    from pyscrapper import run_scrapper
+    from pyscrapper.scrapper import run_scrapper
 
+    def do_show_page(url, content):
+        """
+        Parse content and store info in variable or database
+        """
+        pass
     
     config = {
-        'initial_urls': ["http://url/to/scrap/"],
-        'timeout': 1,
+        "initial_urls": "http://eztv.it/",
+        "follow_urls": [
+            "^http://eztv.it/showlist/$",
+            "^http://eztv.it/shows/\d+/[^/]+/$"
+        ],
+        "landing_urls": [
+            ("^http://eztv.it/shows/\d+/[^/]+/$", do_show_page)
+        ],
+        "clear_history": True,
+        "timeout": 1,
     }
     run_scrapper(config, enable_logging=True)
 

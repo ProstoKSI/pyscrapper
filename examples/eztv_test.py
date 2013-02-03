@@ -3,7 +3,7 @@ import re
 
 from prettytable import PrettyTable
 
-from pyscrapper import run_scrapper
+from pyscrapper.scrapper import run_scrapper
 
 def main():
     """

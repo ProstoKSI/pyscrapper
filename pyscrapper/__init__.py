@@ -5,5 +5,3 @@ __project__ = PROJECT = 'pyscrapper'
 
 log = logging.getLogger( __name__ )
 
-from scrapper import PyScrapper, run_scrapper
-
