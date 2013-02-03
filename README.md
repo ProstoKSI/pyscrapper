@@ -31,7 +31,18 @@ Use pyscrapper
     )
     scrapper.run()
 
-For more detailed usage look at examples:/eztv_test.py example.
+    or
+
+    from pyscrapper import run_scrapper
+
+    
+    config = {
+        'initial_urls': ["http://url/to/scrap/"],
+        'timeout': 1,
+    }
+    run_scrapper(config, enable_logging=True)
+
+For more detailed usage look at examples/eztv_test.py example.
 
 License
 -------

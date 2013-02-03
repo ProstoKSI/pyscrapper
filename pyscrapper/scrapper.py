@@ -1,6 +1,8 @@
 import re
+import sys
 import time
 import urllib2
+import logging
 
 import redis
 
@@ -10,7 +12,7 @@ from pymisc.utils.urls import extract_urls
 class PyScrapper(object):
     
     def __init__(self, initial_urls, follow_urls=[], landing_urls=[], 
-            redis_config={}, browser_class=Browser, clear_history=False, timeout=1, logger=None):
+            redis_config={}, browser_class=Browser, clear_history=False, timeout=1, logger=None, custom_can_follow=None):
         self.redis = redis.StrictRedis(host=redis_config.get('host', 'localhost'), 
             port=redis_config.get('port', 6379), 
             db=redis_config.get('db', 0))
@@ -24,6 +26,7 @@ class PyScrapper(object):
         self.set_initial_urls(initial_urls)
         self.follow_urls = [re.compile(url) for url in follow_urls]
         self.landing_urls = [(re.compile(url), callback) for url, callback in landing_urls]
+        self.custom_can_follow = custom_can_follow
 
     def _log(self, message):
         if self.logger:
@@ -60,6 +63,8 @@ class PyScrapper(object):
     def _can_follow(self, url):
         if self._is_visited_url(url):
             return False
+        if self.custom_can_follow is not None and not self.custom_can_follow(url):
+            return False
         for follow_url in self.follow_urls:
             if follow_url.match(url):
                 return True
@@ -94,4 +99,11 @@ class PyScrapper(object):
             except KeyboardInterrupt:
                 self._log("Scrapper was interrupted. It will continue from interrupted page if `clear_history` flag is not True")
                 break
+
+def run_scrapper(config, enable_logging=True):
+    if enable_logging:
+        logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+        config['logger'] = logging
+    scrapper = PyScrapper(**config)
+    scrapper.run()
 
