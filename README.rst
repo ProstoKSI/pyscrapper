@@ -1,7 +1,7 @@
-pyscrapper
+PyScrapper
 ==========
 
-Python light-weighted and Redis-back scrapper for web-sites
+Light-weighted and with Redis backend scrapper for web-sites written on Python
 
 .. contents::
 
@@ -23,7 +23,7 @@ Installation
 Use pyscrapper
 ------------
 
-Example of usage PyScrapper class:
+Example of usage PyScrapper class: ::
 
     from pyscrapper.scrapper import PyScrapper
 
@@ -33,7 +33,7 @@ Example of usage PyScrapper class:
     )
     scrapper.run()
 
-or using run_scrapper shortcut:
+or using run_scrapper shortcut: ::
 
     from pyscrapper.scrapper import run_scrapper
 
@@ -62,6 +62,6 @@ For more detailed usage look at examples/eztv_test.py example.
 License
 -------
 
-Copyright (C) 2013 Illia Polosukhin
+Copyright (C) 2013 Illia Polosukhin.
 This program is licensed under the MIT License (see LICENSE)
 
